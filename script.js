@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';    //使わなくてもいいや
 
 var localStream = null;
 var peer = null;
@@ -8,7 +8,7 @@ const VIDEO_CODEC = 'VP9';
 
 //カメラ映像、マイク音声の取得
 function getmedia(video_option) {
-    navigator.mediaDevices.getUserMedia({ audio: true, video: video_option })
+    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false }, video: video_option })
         .then(function (stream) {
             // Success
             $('#my-video').get(0).srcObject = stream;
