@@ -55,6 +55,16 @@ $('#twincam2').click(function () {
     $('#callto-id').val("user2");
 });
 
+$('#twincam3').click(function () {
+    getpeerid("tc3");
+    $('#callto-id').val("user3");
+});
+
+$('#twincam4').click(function () {
+    getpeerid("tc4");
+    $('#callto-id').val("user4");
+});
+
 $('#user1').click(function () {
     getpeerid("user1");
     $('#callto-id').val("tc1");
@@ -64,6 +74,18 @@ $('#user1').click(function () {
 $('#user2').click(function () {
     getpeerid("user2");
     $('#callto-id').val("tc2");
+    isReceive = true;
+});
+
+$('#user3').click(function () {
+    getpeerid("user3");
+    $('#callto-id').val("tc3");
+    isReceive = true;
+});
+
+$('#user4').click(function () {
+    getpeerid("user4");
+    $('#callto-id').val("tc4");
     isReceive = true;
 });
 
