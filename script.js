@@ -1,4 +1,4 @@
-//'use strict';    //使わなくてもいいや
+//'use strict';    //使わなくてもいいや 書き方を厳しくチェックするもの。あるとバグが起きにくくなりやすい。らしい
 
 var localStream = null;
 var peer = null;
