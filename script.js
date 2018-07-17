@@ -30,6 +30,10 @@ $('#FullHD').click(function () {
     getmedia(true);
 });
 
+$('#Low').click(function () {
+    getmedia({ width: { ideal: 960 }, height: { ideal: 480 }, frameRate: { ideal: 30 } });
+});
+
 //peeridを取得
 function getpeerid(id) {
     //ボタンをすべて消す　PeerIDがサーバーに残ってしまい初期化ができない
