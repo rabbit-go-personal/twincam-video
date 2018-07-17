@@ -4,7 +4,7 @@ var localStream = null;
 var peer = null;
 let existingCall = null;
 var isReceive = false;    //受信専用かどうか
-const VIDEO_CODEC = 'VP8';
+const VIDEO_CODEC = 'VP9';
 
 //カメラ映像、マイク音声の取得
 function getmedia(video_option) {
