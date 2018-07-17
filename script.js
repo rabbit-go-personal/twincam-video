@@ -31,11 +31,11 @@ $('#FullHD').click(function () {
 });
 
 $('#Low').click(function () {
-    getmedia({ width: { ideal: 960 }, height: { ideal: 480 }, frameRate: { ideal: 15 } });
+    getmedia({ width: 960 , height: 480 , frameRate: { ideal: 15 } });
 });
 
 $('#LowLow').click(function () {
-    getmedia({ width: { ideal: 480 }, height: { ideal: 240 }, frameRate: { ideal: 15 } });
+    getmedia({ width: 480 , height: 240 , frameRate: { ideal: 15 } });
 });
 
 //peerid‚ðŽæ“¾
