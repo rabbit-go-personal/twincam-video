@@ -35,7 +35,7 @@ $('#Low').click(function () {
 });
 
 $('#LowLow').click(function () {
-    getmedia({ width: 480, height: 240, frameRate: { ideal: 15 } });
+    //getmedia({ width: 480, height: 240, frameRate: { ideal: 15 } });
     getmedia({
         "optional": [{ "width": { "max": 480 } },
         { "height": { "max": 240 } }]
