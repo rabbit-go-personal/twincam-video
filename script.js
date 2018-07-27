@@ -12,7 +12,7 @@ let constraints;
 let settings;
 
 //カメラ映像、マイク音声の取得
-function getmedia(video_option) {
+function getmedia(wid, hei, fra) {    //引数は(幅,高さ,fps)
     //セットされている自分のビデオを削除
     $('#my-video').get(0).srcObject = undefined;
     navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false }, video: true })
@@ -20,10 +20,13 @@ function getmedia(video_option) {
             // Success
             videoTrack = stream.getVideoTracks()[0];           //MediaStreamから[0]番目のVideoのMediaStreamTrackを取得
             capabilities = videoTrack.getCapabilities();       //設定可能な値の範囲
-            videoTrack.applyConstraints(video_option)
+            videoTrack.applyConstraints({ width: { ideal: wid }, height: { ideal: hei }, frameRate: { ideal: fra } })
                 .then(() => {                                  //値を設定
                     constraints = videoTrack.getConstraints(); //設定した値
                     settings = videoTrack.getSettings();       //設定された値
+                    $('#width').val(settings.width);                  //今の解像度をresolutionのformに表示
+                    $('#height').val(settings.height);
+                    $('#framerate').val(settings.frameRate);
                     stream.addTrack(videoTrack);               //設定した動画を追加
                 }).catch((err) => {
                     console.error('applyConstraints() error:', err);
@@ -39,28 +42,28 @@ function getmedia(video_option) {
 
 //指定した解像度の映像を取得
 $('#4K').click(function () {
-    getmedia({ width: { ideal: 3840 }, height: { ideal: 1920 }, frameRate: { ideal: 30 } });
+    getmedia(3840, 1920, 30);
 });
 
 $('#FullHD').click(function () {
-    getmedia({ width: { ideal: 1920 }, height: { ideal: 960 }, frameRate: { ideal: 30 } });
+    getmedia(1920, 960, 30);
 });
 
 $('#960').click(function () {
-    getmedia({ width: { ideal: 960 }, height: { ideal: 480 }, frameRate: { ideal: 15 } });
+    getmedia(960, 480, 15);
 });
 
 $('#480').click(function () {
-    getmedia({ width: { ideal: 480 }, height: { ideal: 240 }, frameRate: { ideal: 10 } });
+    getmedia(480, 240, 10);
 });
 
 $('#240').click(function () {
-    getmedia({ width: { ideal: 240 }, height: { ideal: 120 }, frameRate: { ideal: 5 } });
+    getmedia(240, 120, 5);
 });
 
 $('#Resolution').submit(function (e) {
     e.preventDefault();
-    getmedia({ width: { ideal: $('#width').val() }, height: { ideal: $('#height').val() }, frameRate: { ideal: $('#framerate').val() } });
+    getmedia($('#width').val(), $('#height').val(), $('#framerate').val());
 });
 
 //peeridを取得
