@@ -1,9 +1,9 @@
-//'use strict';    //g‚í‚È‚­‚Ä‚à‚¢‚¢‚â ‘‚«•û‚ğŒµ‚µ‚­ƒ`ƒFƒbƒN‚·‚é‚à‚ÌB‚ ‚é‚ÆƒoƒO‚ª‹N‚«‚É‚­‚­‚È‚è‚â‚·‚¢B‚ç‚µ‚¢
+ï»¿//'use strict';    //ä½¿ã‚ãªãã¦ã‚‚ã„ã„ã‚„ æ›¸ãæ–¹ã‚’å³ã—ããƒã‚§ãƒƒã‚¯ã™ã‚‹ã‚‚ã®ã€‚ã‚ã‚‹ã¨ãƒã‚°ãŒèµ·ãã«ãããªã‚Šã‚„ã™ã„ã€‚ã‚‰ã—ã„
 
 let localStream = null;
 let peer = null;
 let existingCall = null;
-let isReceive = false;    //óMê—p‚©‚Ç‚¤‚©
+let isReceive = false;    //å—ä¿¡å°‚ç”¨ã‹ã©ã†ã‹
 const VIDEO_CODEC = 'VP9';
 
 let videoTrack;
@@ -11,28 +11,28 @@ let capabilities;
 let constraints;
 let settings;
 
-//ƒJƒƒ‰‰f‘œAƒ}ƒCƒN‰¹º‚Ìæ“¾
-function getmedia(wid, hei, fra) {    //ˆø”‚Í(•,‚‚³,fps)
-    //ƒZƒbƒg‚³‚ê‚Ä‚¢‚é©•ª‚ÌƒrƒfƒI‚ğíœ
+//ã‚«ãƒ¡ãƒ©æ˜ åƒã€ãƒã‚¤ã‚¯éŸ³å£°ã®å–å¾—
+function getmedia(wid, hei, fra) {    //å¼•æ•°ã¯(å¹…,é«˜ã•,fps)
+    //ã‚»ãƒƒãƒˆã•ã‚Œã¦ã„ã‚‹è‡ªåˆ†ã®ãƒ“ãƒ‡ã‚ªã‚’å‰Šé™¤
     $('#my-video').get(0).srcObject = undefined;
     navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false }, video: true })
         .then(function (stream) {
             // Success
-            videoTrack = stream.getVideoTracks()[0];           //MediaStream‚©‚ç[0]”Ô–Ú‚ÌVideo‚ÌMediaStreamTrack‚ğæ“¾
-            capabilities = videoTrack.getCapabilities();       //İ’è‰Â”\‚È’l‚Ì”ÍˆÍ
+            videoTrack = stream.getVideoTracks()[0];           //MediaStreamã‹ã‚‰[0]ç•ªç›®ã®Videoã®MediaStreamTrackã‚’å–å¾—
+            capabilities = videoTrack.getCapabilities();       //è¨­å®šå¯èƒ½ãªå€¤ã®ç¯„å›²
             videoTrack.applyConstraints({ width: { ideal: wid }, height: { ideal: hei }, frameRate: { ideal: fra } })
-                .then(() => {                                  //’l‚ğİ’è
-                    constraints = videoTrack.getConstraints(); //İ’è‚µ‚½’l
-                    settings = videoTrack.getSettings();       //İ’è‚³‚ê‚½’l
-                    $('#width').val(settings.width);                  //¡‚Ì‰ğ‘œ“x‚ğresolution‚Ìform‚É•\¦
+                .then(() => {                                  //å€¤ã‚’è¨­å®š
+                    constraints = videoTrack.getConstraints(); //è¨­å®šã—ãŸå€¤
+                    settings = videoTrack.getSettings();       //è¨­å®šã•ã‚ŒãŸå€¤
+                    $('#width').val(settings.width);                  //ä»Šã®è§£åƒåº¦ã‚’resolutionã®formã«è¡¨ç¤º
                     $('#height').val(settings.height);
                     $('#framerate').val(settings.frameRate);
-                    stream.addTrack(videoTrack);               //İ’è‚µ‚½“®‰æ‚ğ’Ç‰Á
+                    stream.addTrack(videoTrack);               //è¨­å®šã—ãŸå‹•ç”»ã‚’è¿½åŠ 
                 }).catch((err) => {
                     console.error('applyConstraints() error:', err);
                 });
-            $('#my-video').get(0).srcObject = stream;          //İ’è‚µ‚½“®‰æ‚ğ‰æ–Ê‚ÉƒZƒbƒg
-            localStream = stream;                              //‘—M—p‚ÉƒL[ƒv
+            $('#my-video').get(0).srcObject = stream;          //è¨­å®šã—ãŸå‹•ç”»ã‚’ç”»é¢ã«ã‚»ãƒƒãƒˆ
+            localStream = stream;                              //é€ä¿¡ç”¨ã«ã‚­ãƒ¼ãƒ—
         }).catch(function (error) {
             // Error
             console.error('mediaDevice.getUserMedia() error:', error);
@@ -40,7 +40,7 @@ function getmedia(wid, hei, fra) {    //ˆø”‚Í(•,‚‚³,fps)
         });
 }
 
-//w’è‚µ‚½‰ğ‘œ“x‚Ì‰f‘œ‚ğæ“¾
+//æŒ‡å®šã—ãŸè§£åƒåº¦ã®æ˜ åƒã‚’å–å¾—
 $('#4K').click(function () {
     getmedia(3840, 1920, 30);
 });
@@ -66,21 +66,21 @@ $('#Resolution').submit(function (e) {
     getmedia($('#width').val(), $('#height').val(), $('#framerate').val());
 });
 
-//peerid‚ğæ“¾
+//peeridã‚’å–å¾—
 function getpeerid(id) {
-    //ƒ{ƒ^ƒ“‚ğ‚·‚×‚ÄÁ‚·@PeerID‚ªƒT[ƒo[‚Éc‚Á‚Ä‚µ‚Ü‚¢‰Šú‰»‚ª‚Å‚«‚È‚¢
+    //ãƒœã‚¿ãƒ³ã‚’ã™ã¹ã¦æ¶ˆã™ã€€PeerIDãŒã‚µãƒ¼ãƒãƒ¼ã«æ®‹ã£ã¦ã—ã¾ã„åˆæœŸåŒ–ãŒã§ããªã„
     $('#peerid-ui').hide();
 
-    //peerƒIƒuƒWƒFƒNƒg‚Ìì¬
+    //peerã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ä½œæˆ
     peer = new Peer(id,{
         key: '9373b614-604f-4fd5-b96a-919b20a7c24e',    //APIkey
         debug: 3
     });
 
-    start();//ƒCƒxƒ“ƒgŠm”F
+    start();//ã‚¤ãƒ™ãƒ³ãƒˆç¢ºèª
 }
 
-//peerid‚Ì‘I‘ğ
+//peeridã®é¸æŠ
 $('#twincam1').click(function () {
     getpeerid("tc1");
     $('#callto-id').val("user1");
@@ -135,12 +135,12 @@ $('#random').click(function () {
     getpeerid(null);
 });
 
-//reloadƒ{ƒ^ƒ“
+//reloadãƒœã‚¿ãƒ³
 $('#reload').click(function () {
     location.reload(true);
 });
 
-//”­Mˆ—
+//ç™ºä¿¡å‡¦ç†
 $('#make-call').submit(function (e) {
     e.preventDefault();
     const call = peer.call($('#callto-id').val(), localStream, {
@@ -151,44 +151,44 @@ $('#make-call').submit(function (e) {
     setupCallEventHandlers(call);
 });
 
-//Ø’fˆ—
+//åˆ‡æ–­å‡¦ç†
 $('#end-call').click(function () {
     existingCall.close();
 });
 
-//ƒCƒxƒ“ƒg idæ“¾Œã‚¶‚á‚È‚¢‚Æ“®ì‚µ‚È‚¢
+//ã‚¤ãƒ™ãƒ³ãƒˆ idå–å¾—å¾Œã˜ã‚ƒãªã„ã¨å‹•ä½œã—ãªã„
 function start() {
-    //openƒCƒxƒ“ƒg
+    //openã‚¤ãƒ™ãƒ³ãƒˆ
     peer.on('open', function () {
         $('#my-id').text(peer.id);
     });
 
-    //errorƒCƒxƒ“ƒg
+    //errorã‚¤ãƒ™ãƒ³ãƒˆ
     peer.on('error', function (err) {
         alert(err.message);
         setupMakeCallUI();
     });
 
-    //closeƒCƒxƒ“ƒg
+    //closeã‚¤ãƒ™ãƒ³ãƒˆ
     peer.on('close', function () {
         alert(err.message);
         setupMakeCallUI();
     });
 
-    //disconnectedƒCƒxƒ“ƒg
+    //disconnectedã‚¤ãƒ™ãƒ³ãƒˆ
     peer.on('disconnected', function () {
         alert(err.message);
         setupMakeCallUI();
     });
 
-    //’…Mˆ—
+    //ç€ä¿¡å‡¦ç†
     peer.on('call', function (call) {
         call.answer(localStream, { videoCodec: VIDEO_CODEC });
         setupCallEventHandlers(call);
     });
 }
 
-//CallƒIƒuƒWƒFƒNƒg‚É•K—v‚ÈƒCƒxƒ“ƒg
+//Callã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«å¿…è¦ãªã‚¤ãƒ™ãƒ³ãƒˆ
 function setupCallEventHandlers(call) {
     if (existingCall) {
         existingCall.close();
@@ -202,29 +202,29 @@ function setupCallEventHandlers(call) {
         addVideo(call, stream);
     });
 
-    call.on('close', function () {    //??‚È‚º‚©Às‚³‚ê‚½‘¤‚Å”­‰Î‚¹‚¸??
+    call.on('close', function () {    //??ãªãœã‹å®Ÿè¡Œã•ã‚ŒãŸå´ã§ç™ºç«ã›ãš??
         removeVideo(call.remoteId);
         setupMakeCallUI();
     });
 }
 
-//video—v‘f‚ÌÄ¶
+//videoè¦ç´ ã®å†ç”Ÿ
 function addVideo(call, stream) {
     $('#their-video').get(0).srcObject = stream;
 }
 
-//video—v‘f‚Ìíœ
+//videoè¦ç´ ã®å‰Šé™¤
 function removeVideo(peerId) {
     $('#their-video').get(0).srcObject = undefined;
 }
 
-//ƒ{ƒ^ƒ“‚Ì•\¦
+//ãƒœã‚¿ãƒ³ã®è¡¨ç¤º
 function setupMakeCallUI() {
     $('#make-call').show();
     $('#end-call-ui').hide();
 }
 
-//ƒ{ƒ^ƒ“”ñ•\¦Ø‚è‘Ö‚¦
+//ãƒœã‚¿ãƒ³éè¡¨ç¤ºåˆ‡ã‚Šæ›¿ãˆ
 function setupEndCallUI(call) {
     $('#make-call').hide();
     $('#end-call-ui').show();
