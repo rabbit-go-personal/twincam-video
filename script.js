@@ -4,7 +4,7 @@ let localStream = null;
 let peer = null;
 let existingCall = null;
 let isReceive = false;    //受信専用かどうか
-const VIDEO_CODEC = 'VP9';
+let VIDEO_CODEC = 'VP9';
 
 let videoTrack;
 let capabilities;
@@ -30,20 +30,27 @@ function getmedia(wid, hei, fra) {    //引数は(幅,高さ,fps)
                     stream.addTrack(videoTrack);               //設定した動画を追加
                 }).catch((err) => {
                     console.error('applyConstraints() error:', err);
+                    $('#console').text('applyConstraints() error:' + err);
                 });
             $('#my-video').get(0).srcObject = stream;          //設定した動画を画面にセット
             localStream = stream;                              //送信用にキープ
         }).catch(function (error) {
             // Error
             console.error('mediaDevice.getUserMedia() error:', error);
+            $('#console').text('mediaDevice.getUserMedia() error:' + error);
             return;
         });
 }
 
 //指定した解像度の映像を取得
-$('#4K').click(function () {
+$('#4K30fps').click(function () {
     getmedia(3840, 1920, 30);
 });
+
+$('#4K15fps').click(function () {
+    getmedia(3840, 1920, 15);
+});
+
 
 $('#FullHD').click(function () {
     getmedia(1920, 960, 30);
@@ -80,59 +87,109 @@ function getpeerid(id) {
     start();//イベント確認
 }
 
+//送受信の設定
+function setCallOption(recieve, videoCodec) {
+    isReceive = recieve;
+    $('#isrcv').text(isReceive);
+    VIDEO_CODEC = videoCodec;
+    $('#videocod').text(VIDEO_CODEC);
+}
+
 //peeridの選択
 $('#twincam1').click(function () {
+    setCallOption(false, 'VP9');
     getpeerid("tc1");
     $('#callto-id').val("user1");
 });
 
 $('#twincam2').click(function () {
+    setCallOption(false, 'VP9');
     getpeerid("tc2");
     $('#callto-id').val("user2");
 });
 
 $('#twincam3').click(function () {
+    setCallOption(false, 'VP9');
     getpeerid("tc3");
     $('#callto-id').val("user3");
 });
 
 $('#twincam4').click(function () {
+    setCallOption(false, 'VP9');
     getpeerid("tc4");
     $('#callto-id').val("user4");
 });
 
+$('#twincam5').click(function () {
+    setCallOption(false, 'VP9');
+    getpeerid("tc5");
+    $('#callto-id').val("user5");
+});
+
+$('#twincam6').click(function () {
+    setCallOption(false, 'VP9');
+    getpeerid("tc6");
+    $('#callto-id').val("user6");
+});
+
 $('#user1').click(function () {
+    setCallOption(true, 'VP9');
     getpeerid("user1");
     $('#callto-id').val("tc1");
-    isReceive = true;
 });
 
 $('#user2').click(function () {
+    setCallOption(true, 'VP9');
     getpeerid("user2");
     $('#callto-id').val("tc2");
-    isReceive = true;
 });
 
 $('#user3').click(function () {
+    setCallOption(true, 'VP9');
     getpeerid("user3");
     $('#callto-id').val("tc3");
-    isReceive = true;
 });
 
 $('#user4').click(function () {
+    setCallOption(true, 'VP9');
     getpeerid("user4");
     $('#callto-id').val("tc4");
-    isReceive = true;
+});
+
+$('#user5').click(function () {
+    setCallOption(true, 'VP9');
+    getpeerid("user5");
+    $('#callto-id').val("tc5");
+});
+
+$('#user6').click(function () {
+    setCallOption(true, 'VP9');
+    getpeerid("user6");
+    $('#callto-id').val("tc6");
+});
+
+$('#videot').click(function () {
+    setCallOption(false, 'H264');
+    getpeerid("videoT");
+    $('#callto-id').val("videoU");
+
+});
+
+$('#videou').click(function () {
+    setCallOption(false, 'H264');
+    getpeerid("videoU");
+    $('#callto-id').val("videoT");
 });
 
 $('#recieve').click(function () {
-    getpeerid(null);
+    setCallOption(true, 'VP9');
+    getpeerid();
     $('#callto-id').val("tc");
-    isReceive = true;
 });
 
 $('#random').click(function () {
-    getpeerid(null);
+    setCallOption(true, 'VP9');
+    getpeerid();
 });
 
 //reloadボタン
@@ -165,19 +222,22 @@ function start() {
 
     //errorイベント
     peer.on('error', function (err) {
-        alert(err.message);
+        //alert(err.message);
+        $('#console').text(err.message);
         setupMakeCallUI();
     });
 
     //closeイベント
     peer.on('close', function () {
-        alert(err.message);
+        //alert(err.message);
+        $('#console').text(err.message);
         setupMakeCallUI();
     });
 
     //disconnectedイベント
     peer.on('disconnected', function () {
-        alert(err.message);
+        //alert(err.message);
+        $('#console').text(err.message);
         setupMakeCallUI();
     });
 
@@ -229,4 +289,5 @@ function setupEndCallUI(call) {
     $('#make-call').hide();
     $('#end-call-ui').show();
     $('#their-id').text(call.remoteId);
+    $('#console').text('');
 }
