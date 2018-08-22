@@ -6,6 +6,9 @@ let existingCall = null;
 let isReceive = false;    //受信専用かどうか
 let VIDEO_CODEC = 'VP9';
 
+let mediaRecorder = null;
+let rcvStream = null;
+
 let videoTrack;
 let capabilities;
 let constraints;
@@ -192,6 +195,30 @@ $('#random').click(function () {
     getpeerid();
 });
 
+//Recordボタン
+$('#recstart').click(function () {
+    if (rcvStream != null) {
+        mediaRecorder = new MediaRecorder(rcvStream);//録画用のインスタンス作成
+        mediaRecorder.start();                       //録画開始
+        $('#console').text("recorder started");
+    }
+});
+
+$('#recstop').click(function () {
+    if (mediaRecorder != null) {
+        mediaRecorder.stop();                        //録画停止
+        $('#console').text("recorder stopped");
+    }
+    mediaRecorder.ondataavailable = function (e) {
+        //保存用URLの生成
+        let videoBrob = new Blob([e.data], { type: e.data.type });
+        let anchor = $('#downloadlink').get(0);
+        anchor.text = 'Download';
+        anchor.download = 'recorded.webm';
+        anchor.href = window.URL.createObjectURL(videoBrob);
+    }
+});
+
 //reloadボタン
 $('#reload').click(function () {
     location.reload(true);
@@ -270,6 +297,7 @@ function setupCallEventHandlers(call) {
 
 //video要素の再生
 function addVideo(call, stream) {
+    rcvStream = stream;                         //録画用にキープ
     $('#their-video').get(0).srcObject = stream;
 }
 
