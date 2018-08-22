@@ -196,13 +196,21 @@ $('#random').click(function () {
 });
 
 //Recordボタン
-$('#recstart').click(function () {
-    if (rcvStream != null) {
-        mediaRecorder = new MediaRecorder(rcvStream);//録画用のインスタンス作成
-        mediaRecorder.start();                       //録画開始
-        $('#console').text("recorder started");
-    }
+$('#locrecstart').click(function () {
+    recStart(localStream);
 });
+
+$('#rcvrecstart').click(function () {
+    recStart(rcvStream);
+});
+
+function recStart(stream) {
+    if (stream != null) {
+        mediaRecorder = new MediaRecorder(stream); //録画用のインスタンス作成
+        mediaRecorder.start(); //録画開始
+        $('#console').text("recieved video recorder started");
+    }
+}
 
 $('#recstop').click(function () {
     if (mediaRecorder != null) {
