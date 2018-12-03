@@ -172,6 +172,18 @@ $('#user6').click(function () {
     $('#callto-id').val("tc6");
 });
 
+$('#ln1').click(function () {
+    setCallOption(true, MAIN_VIDEO_CODEC);
+    getpeerid("ln1");
+    $('#callto-id').val("ALR1");
+});
+
+$('#ln2').click(function () {
+    setCallOption(true, MAIN_VIDEO_CODEC);
+    getpeerid("ln2");
+    $('#callto-id').val("ALR2");
+});
+
 $('#videot').click(function () {
     setCallOption(false, 'H264');
     getpeerid("videoT");
