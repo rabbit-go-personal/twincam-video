@@ -4,11 +4,18 @@ let localStream = null;
 let peer = null;
 let existingCall = null;
 let isReceive = false;    //受信専用かどうか
-let MAIN_VIDEO_CODEC = 'VP9';
+const MAIN_VIDEO_CODEC = 'VP9';
 let vidCodec = null;
 
 let mediaRecorder = null;
+let chunks = [];    // 録画でデータを保持する
 let rcvStream = null;
+let dataType = null;
+
+const STATS_INTERVAL = 1000;    //Statsを保存する間隔 ms
+let statsCount = 0;
+let timer;
+let data_csv = "";
 
 let videoTrack;
 let capabilities;
@@ -28,7 +35,7 @@ function getmedia(wid, hei, fra) {    //引数は(幅,高さ,fps)
                 .then(() => {                                  //値を設定
                     constraints = videoTrack.getConstraints(); //設定した値
                     settings = videoTrack.getSettings();       //設定された値
-                    $('#width').val(settings.width);                  //今の解像度をresolutionのformに表示
+                    $('#width').val(settings.width);           //今の解像度をresolutionのformに表示
                     $('#height').val(settings.height);
                     $('#framerate').val(settings.frameRate);
                     stream.addTrack(videoTrack);               //設定した動画を追加
@@ -218,27 +225,228 @@ $('#rcvrecstart').click(function () {
 });
 
 function recStart(stream) {
-    if (stream != null) {
-        mediaRecorder = new MediaRecorder(stream); //録画用のインスタンス作成
-        mediaRecorder.start(); //録画開始
-        $('#console').text("recieved video recorder started");
+    //チェック
+    if (!stream) {
+        $('#console').text("stream not ready");
+        return;
     }
-}
+    if (mediaRecorder) {
+        $('#console').text("already recording");
+        return;
+    }
 
-$('#recstop').click(function () {
-    if (mediaRecorder != null) {
-        mediaRecorder.stop();                        //録画停止
-        $('#console').text("recorder stopped");
+    mediaRecorder = new MediaRecorder(stream); //録画用のインスタンス作成
+    chunks = [];                               //格納場所をクリア
+
+    // 一定間隔で録画が区切られて、データが渡される
+    mediaRecorder.ondataavailable = function(evt) {
+        chunks.push(evt.data);
+        dataType = evt.data.type;
     }
-    mediaRecorder.ondataavailable = function (e) {
+
+    //録画停止時のイベント
+    mediaRecorder.onstop = function (evt) {
         //保存用URLの生成
-        let videoBrob = new Blob([e.data], { type: e.data.type });
-        let anchor = $('#downloadlink').get(0);
-        anchor.text = 'Download';
+        let videoBrob = new Blob(chunks, { type: dataType });
+        let anchor = $('#downloadlink-video').get(0);
+        anchor.text = 'Download Record';
         anchor.download = 'recorded.webm';
         anchor.href = window.URL.createObjectURL(videoBrob);
+        mediaRecorder = null;
+    }
+
+    mediaRecorder.start(1000); //録画開始 1000ms 毎に録画データを区切る
+    $('#console').text("video recorder started");
+}
+
+//録画停止
+$('#recstop').click(function () {
+    if (mediaRecorder) {
+        mediaRecorder.stop();   //録画停止
+        $('#console').text("recorder stopped");
     }
 });
+
+//Statsボタン
+$('#getting-stats').on('click', () => {
+    //setIntervalでSTATS_INTERVALで指定した間隔でgetRTCStatsを実行する
+    timer = setInterval(() => {
+        getRTCStats(existingCall._negotiator._pc.getStats())
+    }, STATS_INTERVAL);
+});
+
+$('#stop-acquiring-stats').on('click', () => {
+    clearInterval(timer);
+
+    let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);                       //文字コードをBOM付きUTF-8に指定
+    let statsBrob = new Blob([bom, data_csv], { "type": "text/csv" });  //data_csvのデータをcsvとしてダウンロードする関数
+    let anchor = $('#downloadlink-stats').get(0);
+    anchor.text = 'Download Stats';
+    anchor.download = 'stats.csv';
+    anchor.href = window.URL.createObjectURL(statsBrob);
+    //初期化
+    data_csv = "";
+    statsCount = 0;
+});
+
+async function getRTCStats(statsObject) {
+
+    //let trasportArray = [];
+    //let candidateArray = [];
+    //let candidatePairArray = [];
+    //let inboundRTPAudioStreamArray = [];
+    //let inboundRTPVideoStreamArray = [];
+    //let outboundRTPAudioStreamArray = [];
+    //let outboundRTPVideoStreamArray = [];
+    //let codecArray = [];
+    let mediaStreamTrack_senderArray = [];
+    let mediaStreamTrack_receiverArray = [];
+    //let mediaStreamTrack_local_audioArray = []
+    //let mediaStreamTrack_remote_audioArray = []
+    let mediaStreamTrack_local_videoArray = []
+    let mediaStreamTrack_remote_videoArray = []
+    //let candidatePairId = '';
+    //let localCandidateId = '';
+    //let remoteCandidateId = '';
+    //let localCandidate = {};
+    //let remoteCandidate = {};
+    //let inboundAudioCodec = {};
+    //let inboundVideoCodec = {};
+    //let outboundAudioCode = {};
+    //let outboundVideoCode = {};
+
+    let stats = await statsObject;
+    stats.forEach(stat => {
+    //if (stat.id.indexOf('RTCTransport') !== -1) {
+    //    trasportArray.push(stat);
+    //}
+    //if (stat.id.indexOf('RTCIceCandidatePair') !== -1) {
+    //    candidatePairArray.push(stat);
+    //}
+    //if (stat.id.indexOf('RTCIceCandidate_') !== -1) {
+    //    candidateArray.push(stat);
+    //}
+    //if (stat.id.indexOf('RTCInboundRTPAudioStream') !== -1) {
+    //    inboundRTPAudioStreamArray.push(stat);
+    //}
+    //if (stat.id.indexOf('RTCInboundRTPVideoStream') !== -1) {
+    //    inboundRTPVideoStreamArray.push(stat);
+    //}
+    //if (stat.id.indexOf('RTCOutboundRTPAudioStream') !== -1) {
+    //    outboundRTPAudioStreamArray.push(stat);
+    //}
+    //if (stat.id.indexOf('RTCOutboundRTPVideoStream') !== -1) {
+    //    outboundRTPVideoStreamArray.push(stat);
+    //}
+    if (stat.id.indexOf('RTCMediaStreamTrack_sender') !== -1) {
+        mediaStreamTrack_senderArray.push(stat);
+    }
+    if (stat.id.indexOf('RTCMediaStreamTrack_receiver') !== -1) {
+        mediaStreamTrack_receiverArray.push(stat);
+    }
+    //if (stat.id.indexOf('RTCCodec') !== -1) {
+    //    codecArray.push(stat);
+    //}
+    });
+
+    //trasportArray.forEach(transport => {
+    //    if (transport.dtlsState === 'connected') {
+    //        candidatePairId = transport.selectedCandidatePairId;
+    //    }
+    //});
+    //candidatePairArray.forEach(candidatePair => {
+    //    if (candidatePair.state === 'succeeded' && candidatePair.id === candidatePairId) {
+    //        localCandidateId = candidatePair.localCandidateId;
+    //        remoteCandidateId = candidatePair.remoteCandidateId;
+    //    }
+    //});
+    //candidateArray.forEach(candidate => {
+    //    if (candidate.id === localCandidateId) {
+    //        localCandidate = candidate;
+    //    }
+    //    if (candidate.id === remoteCandidateId) {
+    //        remoteCandidate = candidate;
+    //    }
+    //});
+    //inboundRTPAudioStreamArray.forEach(inboundRTPAudioStream => {
+    //    codecArray.forEach(codec => {
+    //        if (inboundRTPAudioStream.codecId === codec.id) {
+    //            inboundAudioCodec = codec;
+    //        }
+    //    });
+    //});
+    //inboundRTPVideoStreamArray.forEach(inboundRTPVideoStream => {
+    //    codecArray.forEach(codec => {
+    //        if (inboundRTPVideoStream.codecId === codec.id) {
+    //            inboundVideoCodec = codec;
+    //        }
+    //    });
+    //});
+    //outboundRTPAudioStreamArray.forEach(outboundRTPAudioStream => {
+    //    codecArray.forEach(codec => {
+    //        if (outboundRTPAudioStream.codecId === codec.id) {
+    //            outboundAudioCodec = codec;
+    //        }
+    //    });
+    //});
+    //outboundRTPVideoStreamArray.forEach(outboundRTPVideo => {
+    //    codecArray.forEach(codec => {
+    //        if (outboundRTPVideo.codecId === codec.id) {
+    //            outboundVideoCodec = codec;
+    //        }
+    //    });
+    //});
+    mediaStreamTrack_senderArray.forEach(mediaStreamTrack => {
+        if (mediaStreamTrack.kind === 'audio') {
+            //mediaStreamTrack_local_audioArray.push(mediaStreamTrack)
+        } else if (mediaStreamTrack.kind === 'video') {
+            mediaStreamTrack_local_videoArray.push(mediaStreamTrack)
+        }
+    });
+    mediaStreamTrack_receiverArray.forEach(mediaStreamTrack => {
+        if (mediaStreamTrack.kind === 'audio') {
+            //mediaStreamTrack_remote_audioArray.push(mediaStreamTrack)
+        } else if (mediaStreamTrack.kind === 'video') {
+            mediaStreamTrack_remote_videoArray.push(mediaStreamTrack)
+        }
+    });
+
+    //力技　先に0で宣言しといて，tryで代入失敗したら無視する
+    let lfHei = 0;
+    let lfWid = 0;
+    let lfSen = 0;
+    let rfHei = 0;
+    let rfWid = 0;
+    let rfRec = 0;
+
+    try {
+        lfHei = mediaStreamTrack_local_videoArray[0].frameHeight;
+        lfWid = mediaStreamTrack_local_videoArray[0].frameWidth;
+        lfSen = mediaStreamTrack_local_videoArray[0].framesSent;
+    } catch (e) {} 
+    try {
+        rfHei = mediaStreamTrack_remote_videoArray[0].frameHeight;
+        rfWid = mediaStreamTrack_remote_videoArray[0].frameWidth;
+        rfRec = mediaStreamTrack_remote_videoArray[0].framesReceived;
+    } catch (e) {} 
+
+    $('#local-video').text('frameHeight:' + lfHei
+                            + ' frameWidth:' + lfWid
+                            + ' framesSent:' + lfSen);
+    $('#remote-video').text('frameHeight:' + rfHei
+                             + ' frameWidth:' + rfWid
+                             + ' framesReceived:' + rfRec);
+
+    data_csv += statsCount * STATS_INTERVAL + ','
+        + lfHei + ','
+        + lfWid + ','
+        + lfSen + ','
+        + rfHei + ','
+        + rfWid + ','
+        + rfRec + "\n";
+
+    statsCount++;
+}
 
 //reloadボタン
 $('#reload').click(function () {
