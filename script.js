@@ -107,6 +107,18 @@ function setCallOption(recieve, vCod) {
 }
 
 //peeridの選択
+$('#twincamL').click(function () {
+    setCallOption(false, MAIN_VIDEO_CODEC);
+    getpeerid("tcL");
+    $('#callto-id').val("userL");
+});
+
+$('#twincamR').click(function () {
+    setCallOption(false, MAIN_VIDEO_CODEC);
+    getpeerid("tcR");
+    $('#callto-id').val("userR");
+});
+
 $('#twincam1').click(function () {
     setCallOption(false, MAIN_VIDEO_CODEC);
     getpeerid("tc1");
@@ -141,6 +153,18 @@ $('#twincam6').click(function () {
     setCallOption(false, MAIN_VIDEO_CODEC);
     getpeerid("tc6");
     $('#callto-id').val("user6");
+});
+
+$('#userL').click(function () {
+    setCallOption(true, MAIN_VIDEO_CODEC);
+    getpeerid("userL");
+    $('#callto-id').val("tcL");
+});
+
+$('#userR').click(function () {
+    setCallOption(true, MAIN_VIDEO_CODEC);
+    getpeerid("userR");
+    $('#callto-id').val("tcR");
 });
 
 $('#user1').click(function () {
