@@ -21,7 +21,7 @@ let videoTrack;
 let capabilities;
 let constraints;
 let settings;
-
+let room;
 //カメラ映像、マイク音声の取得
 function getmedia(wid, hei, fra) {    //引数は(幅,高さ,fps)
     //セットされている自分のビデオを削除
@@ -107,7 +107,7 @@ function getpeerroom(room,id) {
         key: '6cee6718-08d3-4ce7-93a9-237ecd4601bb',     //APIkey
         debug: 3
     });
-    const room = peer.joinRoom(id, {
+     room = peer.joinRoom(id, {
         mode: "sfu",
         stream: localStream,
     });
