@@ -107,7 +107,7 @@ function getpeerroom(roomid,id) {
         key: '829682c4-f853-4d97-8691-aa0c10064efd',     //APIkey
         debug: 3
     });
-     room = peer.joinRoom(id, {
+    room = peer.joinRoom(id, {
         mode: "sfu",
         stream: localStream,
     });
@@ -542,10 +542,14 @@ function start() {
     });
 }
 //イベント id取得後じゃないと動作しない
-function roomstart() {
+function roomstart(id) {
     //openイベント
     room.on('open', function () {
         $('#my-id').text(peer.id);
+        room = peer.joinRoom(id, {
+            mode: "sfu",
+            stream: localStream,
+        });
     });
 
     //errorイベント
