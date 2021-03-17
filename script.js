@@ -94,10 +94,25 @@ function getpeerid(id) {
         key: '6cee6718-08d3-4ce7-93a9-237ecd4601bb',     //APIkey
         debug: 3
     });
-
+    
     start();//イベント確認
 }
+//peeridを取得
+function getpeerroom(room,id) {
+    //ボタンをすべて消す　PeerIDがサーバーに残ってしまい初期化ができない
+    $('#peerid-ui').hide();
 
+    //peerオブジェクトの作成
+    peer = new Peer(room, {
+        key: '6cee6718-08d3-4ce7-93a9-237ecd4601bb',     //APIkey
+        debug: 3
+    });
+    const room = peer.joinRoom(id, {
+        mode: "sfu",
+        stream: localStream,
+    });
+    start();//イベント確認
+}
 //送受信の設定
 function setCallOption(recieve, vCod) {
     isReceive = recieve;
@@ -110,6 +125,7 @@ function setCallOption(recieve, vCod) {
 $('#twincamL').click(function () {
     setCallOption(false, MAIN_VIDEO_CODEC);
     getpeerid("tcL");
+
     $('#callto-id').val("userL");
 });
 
@@ -215,17 +231,15 @@ $('#ln2').click(function () {
     $('#callto-id').val("ALR2");
 });
 
-$('#videot').click(function () {
-    setCallOption(false, 'H264');
-    getpeerid("videoT");
-    $('#callto-id').val("videoU");
+$('#room1left').click(function () {
+    setCallOption(true, MAIN_VIDEO_CODEC);
+    getpeerroom("Room1Left");
 
 });
 
-$('#videou').click(function () {
-    setCallOption(false, 'H264');
-    getpeerid("videoU");
-    $('#callto-id').val("videoT");
+$('#room1right').click(function () {
+    setCallOption(true, MAIN_VIDEO_CODEC);
+    getpeerroom("Room1Right");
 });
 
 $('#recieve').click(function () {
@@ -523,6 +537,40 @@ function start() {
 
     //着信処理
     peer.on('call', function (call) {
+        call.answer(localStream, { videoCodec: vidCodec });
+        setupCallEventHandlers(call);
+    });
+}
+//イベント id取得後じゃないと動作しない
+function roomstart() {
+    //openイベント
+    room.on('open', function () {
+        $('#my-id').text(peer.id);
+    });
+
+    //errorイベント
+    room.on('error', function (err) {
+        //alert(err.message);
+        $('#console').text(err.message);
+        setupMakeCallUI();
+    });
+
+    //closeイベント
+    room.on('close', function () {
+        //alert(err.message);
+        $('#console').text(err.message);
+        setupMakeCallUI();
+    });
+
+    //disconnectedイベント
+    room.on('disconnected', function () {
+        //alert(err.message);
+        $('#console').text(err.message);
+        setupMakeCallUI();
+    });
+
+    //着信処理
+    room.on('call', function (call) {
         call.answer(localStream, { videoCodec: vidCodec });
         setupCallEventHandlers(call);
     });
