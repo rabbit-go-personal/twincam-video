@@ -98,12 +98,12 @@ function getpeerid(id) {
     start();//イベント確認
 }
 //peeridを取得
-function getpeerroom(room,id) {
+function getpeerroom(roomid,id) {
     //ボタンをすべて消す　PeerIDがサーバーに残ってしまい初期化ができない
     $('#peerid-ui').hide();
 
     //peerオブジェクトの作成
-    peer = new Peer(room, {
+    peer = new Peer(roomid, {
         key: '829682c4-f853-4d97-8691-aa0c10064efd',     //APIkey
         debug: 3
     });
