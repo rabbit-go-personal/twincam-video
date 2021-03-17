@@ -540,7 +540,7 @@ function start() {
 //イベント id取得後じゃないと動作しない
 function roomstart(id) {
     //openイベント
-    room.on('open', function () {
+    call.on('open', function () {
         $('#my-id').text(peer.id);
         room = peer.joinRoom(id, {
             mode: "sfu",
@@ -549,30 +549,33 @@ function roomstart(id) {
     });
 
     //errorイベント
-    room.on('error', function (err) {
+    call.on('error', function (err) {
         //alert(err.message);
         $('#console').text(err.message);
         setupMakeCallUI();
     });
 
     //closeイベント
-    room.on('close', function () {
+    call.on('close', function () {
         //alert(err.message);
         $('#console').text(err.message);
         setupMakeCallUI();
     });
 
     //disconnectedイベント
-    room.on('disconnected', function () {
+    call.on('disconnected', function () {
         //alert(err.message);
         $('#console').text(err.message);
         setupMakeCallUI();
     });
 
     //着信処理
-    room.on('call', function (call) {
+    call.on('call', function (call) {
         call.answer(localStream, { videoCodec: vidCodec });
         setupCallEventHandlers(call);
+    });
+    call.on('stream', function (stream) {
+        addVideo(call, stream);
     });
 }
 
