@@ -233,13 +233,13 @@ $('#ln2').click(function () {
 
 $('#room1left').click(function () {
     setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerroom("Room1Left");
+    getpeerroom("Room1","Left");
 
 });
 
 $('#room1right').click(function () {
     setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerroom("Room1Right");
+    getpeerroom("Room1","Right");
 });
 
 $('#recieve').click(function () {
