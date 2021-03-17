@@ -104,7 +104,7 @@ function getpeerroom(room,id) {
 
     //peerオブジェクトの作成
     peer = new Peer(room, {
-        key: '6cee6718-08d3-4ce7-93a9-237ecd4601bb',     //APIkey
+        key: '829682c4-f853-4d97-8691-aa0c10064efd',     //APIkey
         debug: 3
     });
      room = peer.joinRoom(id, {
