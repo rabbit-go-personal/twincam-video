@@ -98,7 +98,7 @@ function getpeerid(id) {
     start();//イベント確認
 }
 //peeridを取得
-function getpeerroom(roomid,id) {
+function getpeerroom(roomid,idname) {
     //ボタンをすべて消す　PeerIDがサーバーに残ってしまい初期化ができない
     $('#peerid-ui').hide();
 
@@ -107,11 +107,7 @@ function getpeerroom(roomid,id) {
         key: '829682c4-f853-4d97-8691-aa0c10064efd',     //APIkey
         debug: 3
     });
-    room = peer.joinRoom(id, {
-        mode: "sfu",
-        stream: localStream,
-    });
-    start();//イベント確認
+    roomstart(idname);//イベント確認
 }
 //送受信の設定
 function setCallOption(recieve, vCod) {
