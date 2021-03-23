@@ -4,7 +4,7 @@ let localStream = null;
 let peer = null;
 let existingCall = null;
 let isReceive = false;    //受信専用かどうか
-const MAIN_VIDEO_CODEC = 'H264';
+const MAIN_VIDEO_CODEC = 'VP9';
 let vidCodec = null;
 
 let mediaRecorder = null;
