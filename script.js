@@ -4,7 +4,7 @@ let localStream = null;
 let peer = null;
 let existingCall = null;
 let isReceive = false;    //受信専用かどうか
-const MAIN_VIDEO_CODEC = 'VP9';
+const MAIN_VIDEO_CODEC = 'H264';
 let vidCodec = null;
 
 let mediaRecorder = null;
@@ -229,13 +229,13 @@ $('#ln2').click(function () {
 
 $('#room1left').click(function () {
     setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerroom("Room1Right","tcL");
+    getpeerroom("Room1Left","tcL");
 
 });
 
 $('#room1right').click(function () {
     setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerroom("Room1Left","tcR");
+    getpeerroom("Room1Right","tcR");
 });
 
 $('#recieve').click(function () {
