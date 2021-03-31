@@ -22,6 +22,19 @@ let capabilities;
 let constraints;
 let settings;
 let room;
+
+function CreateVideoElement(id, width, height) {
+    var id = Pointer_stringify(id);
+    var s = document.createElement("video");
+    s.setAttribute('id', id);
+    s.setAttribute('width', width);
+    s.setAttribute('height', height);
+    document.body.appendChild(s);
+    s.setAttribute('autoplay', '');
+    s.setAttribute('muted', '');
+    s.style.display = 'none';
+}
+
 //カメラ映像、マイク音声の取得
 function getmedia(wid, hei, fra) {    //引数は(幅,高さ,fps)
     //セットされている自分のビデオを削除
@@ -52,6 +65,35 @@ function getmedia(wid, hei, fra) {    //引数は(幅,高さ,fps)
             return;
         });
 }
+//カメラ映像、マイク音声の取得
+function gethttpsource(wid, hei, fra, videoid) {    //引数は(幅,高さ,fps)
+    var video = document.getElementById(videoid);
+    if (video == null) {
+        CreateVideoElement(videoid, wid, hei);
+        video = document.getElementById(videoid);
+    }
+    var canvas = document.getElementById("canvas");
+    if (canvas == null) {
+        canvas = document.createElement('canvas');
+        canvas.style.display = 'none';
+    }
+    canvas.height = hei;
+    canvas.width = wid;
+
+    const ctx = canvas.getContext('2d');
+    setInterval(() => {
+        if (canvas && ctx) {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        }
+    }, 10000 / fra);
+    const canvasStream = canvas.captureStream(fra);
+    //セットされている自分のビデオを削除
+    $('#my-video').get(0).srcObject = undefined;
+
+    $('#my-video').get(0).srcObject = canvasStream;          //設定した動画を画面にセット
+    localStream = canvasStream;                              //送信用にキープ
+}
+
 
 //指定した解像度の映像を取得
 $('#4K30fps').click(function () {
@@ -78,6 +120,12 @@ $('#480').click(function () {
 $('#240').click(function () {
     getmedia(240, 120, 5);
 });
+$('#LocalRight').click(function () {
+    gethttpsource(3840, 1920, 30, 'right');
+});
+$('#LocalLeft').click(function () {
+    gethttpsource(3840, 1920, 30, 'left');
+});
 
 $('#Resolution').submit(function (e) {
     e.preventDefault();
@@ -90,15 +138,15 @@ function getpeerid(id) {
     $('#peerid-ui').hide();
 
     //peerオブジェクトの作成
-    peer = new Peer(id,{
+    peer = new Peer(id, {
         key: '829682c4-f853-4d97-8691-aa0c10064efd',     //APIkey
         debug: 3
     });
-    
+
     start();//イベント確認
 }
 //peeridを取得
-function getpeerroom(roomid,idname) {
+function getpeerroom(roomid, idname) {
     //ボタンをすべて消す　PeerIDがサーバーに残ってしまい初期化ができない
     $('#peerid-ui').hide();
 
@@ -131,111 +179,39 @@ $('#twincamR').click(function () {
     $('#callto-id').val("userR");
 });
 
-$('#twincam1').click(function () {
-    setCallOption(false, MAIN_VIDEO_CODEC);
-    getpeerid("tc1");
-    $('#callto-id').val("user1");
-});
 
-$('#twincam2').click(function () {
-    setCallOption(false, MAIN_VIDEO_CODEC);
-    getpeerid("tc2");
-    $('#callto-id').val("user2");
-});
-
-$('#twincam3').click(function () {
-    setCallOption(false, MAIN_VIDEO_CODEC);
-    getpeerid("tc3");
-    $('#callto-id').val("user3");
-});
-
-$('#twincam4').click(function () {
-    setCallOption(false, MAIN_VIDEO_CODEC);
-    getpeerid("tc4");
-    $('#callto-id').val("user4");
-});
-
-$('#twincam5').click(function () {
-    setCallOption(false, MAIN_VIDEO_CODEC);
-    getpeerid("tc5");
-    $('#callto-id').val("user5");
-});
-
-$('#twincam6').click(function () {
-    setCallOption(false, MAIN_VIDEO_CODEC);
-    getpeerid("tc6");
-    $('#callto-id').val("user6");
-});
-
-$('#userL').click(function () {
-    setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerid("userL");
-    $('#callto-id').val("tcL");
-});
-
-$('#userR').click(function () {
-    setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerid("userR");
-    $('#callto-id').val("tcR");
-});
-
-$('#user1').click(function () {
-    setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerid("user1");
-    $('#callto-id').val("tc1");
-});
-
-$('#user2').click(function () {
-    setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerid("user2");
-    $('#callto-id').val("tc2");
-});
-
-$('#user3').click(function () {
-    setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerid("user3");
-    $('#callto-id').val("tc3");
-});
-
-$('#user4').click(function () {
-    setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerid("user4");
-    $('#callto-id').val("tc4");
-});
-
-$('#user5').click(function () {
-    setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerid("user5");
-    $('#callto-id').val("tc5");
-});
-
-$('#user6').click(function () {
-    setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerid("user6");
-    $('#callto-id').val("tc6");
-});
-
-$('#ln1').click(function () {
-    setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerid("ln1");
-    $('#callto-id').val("ALR1");
-});
-
-$('#ln2').click(function () {
-    setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerid("ln2");
-    $('#callto-id').val("ALR2");
-});
 
 $('#room1left').click(function () {
     setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerroom("Room1Left","tcL");
+    getpeerroom("Room1Left", "tcL");
 
 });
 
 $('#room1right').click(function () {
     setCallOption(true, MAIN_VIDEO_CODEC);
-    getpeerroom("Room1Right","tcR");
+    getpeerroom("Room1Right", "tcR");
+});
+
+$('#room2left').click(function () {
+    setCallOption(true, MAIN_VIDEO_CODEC);
+    getpeerroom("Room2Left", "tcL");
+
+});
+
+$('#room2right').click(function () {
+    setCallOption(true, MAIN_VIDEO_CODEC);
+    getpeerroom("Room2Right", "tcR");
+});
+
+$('#room3left').click(function () {
+    setCallOption(true, MAIN_VIDEO_CODEC);
+    getpeerroom("Room3Left", "tcL");
+
+});
+
+$('#room3right').click(function () {
+    setCallOption(true, MAIN_VIDEO_CODEC);
+    getpeerroom("Room3Right", "tcR");
 });
 
 $('#recieve').click(function () {
@@ -273,7 +249,7 @@ function recStart(stream) {
     chunks = [];                               //格納場所をクリア
 
     // 一定間隔で録画が区切られて、データが渡される
-    mediaRecorder.ondataavailable = function(evt) {
+    mediaRecorder.ondataavailable = function (evt) {
         chunks.push(evt.data);
         dataType = evt.data.type;
     }
@@ -351,36 +327,36 @@ async function getRTCStats(statsObject) {
 
     let stats = await statsObject;
     stats.forEach(stat => {
-    //if (stat.id.indexOf('RTCTransport') !== -1) {
-    //    trasportArray.push(stat);
-    //}
-    //if (stat.id.indexOf('RTCIceCandidatePair') !== -1) {
-    //    candidatePairArray.push(stat);
-    //}
-    //if (stat.id.indexOf('RTCIceCandidate_') !== -1) {
-    //    candidateArray.push(stat);
-    //}
-    //if (stat.id.indexOf('RTCInboundRTPAudioStream') !== -1) {
-    //    inboundRTPAudioStreamArray.push(stat);
-    //}
-    //if (stat.id.indexOf('RTCInboundRTPVideoStream') !== -1) {
-    //    inboundRTPVideoStreamArray.push(stat);
-    //}
-    //if (stat.id.indexOf('RTCOutboundRTPAudioStream') !== -1) {
-    //    outboundRTPAudioStreamArray.push(stat);
-    //}
-    //if (stat.id.indexOf('RTCOutboundRTPVideoStream') !== -1) {
-    //    outboundRTPVideoStreamArray.push(stat);
-    //}
-    if (stat.id.indexOf('RTCMediaStreamTrack_sender') !== -1) {
-        mediaStreamTrack_senderArray.push(stat);
-    }
-    if (stat.id.indexOf('RTCMediaStreamTrack_receiver') !== -1) {
-        mediaStreamTrack_receiverArray.push(stat);
-    }
-    //if (stat.id.indexOf('RTCCodec') !== -1) {
-    //    codecArray.push(stat);
-    //}
+        //if (stat.id.indexOf('RTCTransport') !== -1) {
+        //    trasportArray.push(stat);
+        //}
+        //if (stat.id.indexOf('RTCIceCandidatePair') !== -1) {
+        //    candidatePairArray.push(stat);
+        //}
+        //if (stat.id.indexOf('RTCIceCandidate_') !== -1) {
+        //    candidateArray.push(stat);
+        //}
+        //if (stat.id.indexOf('RTCInboundRTPAudioStream') !== -1) {
+        //    inboundRTPAudioStreamArray.push(stat);
+        //}
+        //if (stat.id.indexOf('RTCInboundRTPVideoStream') !== -1) {
+        //    inboundRTPVideoStreamArray.push(stat);
+        //}
+        //if (stat.id.indexOf('RTCOutboundRTPAudioStream') !== -1) {
+        //    outboundRTPAudioStreamArray.push(stat);
+        //}
+        //if (stat.id.indexOf('RTCOutboundRTPVideoStream') !== -1) {
+        //    outboundRTPVideoStreamArray.push(stat);
+        //}
+        if (stat.id.indexOf('RTCMediaStreamTrack_sender') !== -1) {
+            mediaStreamTrack_senderArray.push(stat);
+        }
+        if (stat.id.indexOf('RTCMediaStreamTrack_receiver') !== -1) {
+            mediaStreamTrack_receiverArray.push(stat);
+        }
+        //if (stat.id.indexOf('RTCCodec') !== -1) {
+        //    codecArray.push(stat);
+        //}
     });
 
     //trasportArray.forEach(transport => {
@@ -457,19 +433,19 @@ async function getRTCStats(statsObject) {
         lfHei = mediaStreamTrack_local_videoArray[0].frameHeight;
         lfWid = mediaStreamTrack_local_videoArray[0].frameWidth;
         lfSen = mediaStreamTrack_local_videoArray[0].framesSent;
-    } catch (e) {} 
+    } catch (e) { }
     try {
         rfHei = mediaStreamTrack_remote_videoArray[0].frameHeight;
         rfWid = mediaStreamTrack_remote_videoArray[0].frameWidth;
         rfRec = mediaStreamTrack_remote_videoArray[0].framesReceived;
-    } catch (e) {} 
+    } catch (e) { }
 
     $('#local-video').text('frameHeight:' + lfHei
-                            + ' frameWidth:' + lfWid
-                            + ' framesSent:' + lfSen);
+        + ' frameWidth:' + lfWid
+        + ' framesSent:' + lfSen);
     $('#remote-video').text('frameHeight:' + rfHei
-                             + ' frameWidth:' + rfWid
-                             + ' framesReceived:' + rfRec);
+        + ' frameWidth:' + rfWid
+        + ' framesReceived:' + rfRec);
 
     data_csv += statsCount * STATS_INTERVAL + ','
         + lfHei + ','
