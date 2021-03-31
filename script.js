@@ -84,7 +84,6 @@ function gethttpsource(wid, hei, fra, videoid, canvasid) {    //引数は(幅,�
     var canvas = document.getElementById(canvasid);
     if (canvas == null) {
         canvas = CreateCanvasElement(canvasid, wid, hei);
-        canvas.style.display = 'none';
     }
     canvas.height = hei;
     canvas.width = wid;
