@@ -33,6 +33,16 @@ function CreateVideoElement(id, width, height) {
     s.setAttribute('muted', '');
     s.style.display = 'none';
 }
+function CreateCanvasElement(id, width, height) {
+    var s = document.createElement("canvas");
+    s.setAttribute('id', id);
+    s.setAttribute('width', width);
+    s.setAttribute('height', height);
+    document.body.appendChild(s);
+    s.setAttribute('autoplay', '');
+    s.setAttribute('muted', '');
+    s.style.display = 'none';
+}
 
 //カメラ映像、マイク音声の取得
 function getmedia(wid, hei, fra) {    //引数は(幅,高さ,fps)
@@ -65,15 +75,15 @@ function getmedia(wid, hei, fra) {    //引数は(幅,高さ,fps)
         });
 }
 //カメラ映像、マイク音声の取得
-function gethttpsource(wid, hei, fra, videoid) {    //引数は(幅,高さ,fps)
+function gethttpsource(wid, hei, fra, videoid, canvasid) {    //引数は(幅,高さ,fps)
     var video = document.getElementById(videoid);
     if (video == null) {
         CreateVideoElement(videoid, wid, hei);
         video = document.getElementById(videoid);
     }
-    var canvas = document.getElementById("canvas");
+    var canvas = document.getElementById(canvasid);
     if (canvas == null) {
-        canvas = document.createElement('canvas');
+        canvas = CreateCanvasElement(canvasid, wid, hei);
         canvas.style.display = 'none';
     }
     canvas.height = hei;
@@ -120,10 +130,10 @@ $('#240').click(function () {
     getmedia(240, 120, 5);
 });
 $('#LocalRight').click(function () {
-    gethttpsource(3840, 1920, 30, 'right');
+    gethttpsource(3840, 1920, 30, 'right', 'canvasright');
 });
 $('#LocalLeft').click(function () {
-    gethttpsource(3840, 1920, 30, 'left');
+    gethttpsource(3840, 1920, 30, 'left', 'canvasleft');
 });
 
 $('#Resolution').submit(function (e) {
