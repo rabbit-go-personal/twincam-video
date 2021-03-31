@@ -24,7 +24,6 @@ let settings;
 let room;
 
 function CreateVideoElement(id, width, height) {
-    var id = Pointer_stringify(id);
     var s = document.createElement("video");
     s.setAttribute('id', id);
     s.setAttribute('width', width);
