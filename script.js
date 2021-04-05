@@ -157,9 +157,9 @@ function getpeerid(id) {
 function getpeerroom(roomid, idname) {
     //ボタンをすべて消す　PeerIDがサーバーに残ってしまい初期化ができない
     $('#peerid-ui').hide();
-
+    var random = Math.floor(Math.random() * 10000);
     //peerオブジェクトの作成
-    peer = new Peer(idname, {
+    peer = new Peer(idname + random, {
         key: '829682c4-f853-4d97-8691-aa0c10064efd',     //APIkey
         debug: 3
     });
