@@ -159,11 +159,11 @@ function getpeerroom(roomid, idname) {
     $('#peerid-ui').hide();
 
     //peerオブジェクトの作成
-    peer = new Peer(roomid, {
+    peer = new Peer(idname, {
         key: '829682c4-f853-4d97-8691-aa0c10064efd',     //APIkey
         debug: 3
     });
-    roomstart(idname);//イベント確認
+    roomstart(roomid);//イベント確認
 }
 //送受信の設定
 function setCallOption(recieve, vCod) {
