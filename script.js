@@ -67,6 +67,9 @@ function getmedia(wid, hei, fra) {    //引数は(幅,高さ,fps)
                 });
             $('#my-video').get(0).srcObject = stream;          //設定した動画を画面にセット
             localStream = stream;                              //送信用にキープ
+            if(room!=null){
+                room.replaceStream(stream);
+            }
         }).catch(function (error) {
             // Error
             console.error('mediaDevice.getUserMedia() error:', error);
