@@ -4,7 +4,7 @@ let localStream = null;
 let peer = null;
 let existingCall = null;
 let isReceive = false;    //受信専用かどうか
-const MAIN_VIDEO_CODEC = 'VP9';
+var MAIN_VIDEO_CODEC = 'VP9';
 let vidCodec = null;
 
 let mediaRecorder = null;
@@ -233,13 +233,13 @@ $('#random').click(function () {
     getpeerid();
 });
 
-//Recordボタン
-$('#locrecstart').click(function () {
-    recStart(localStream);
+
+$('#vp9').click(function () {
+    MAIN_VIDEO_CODEC = 'VP9';
 });
 
-$('#rcvrecstart').click(function () {
-    recStart(rcvStream);
+$('#h264').click(function () {
+    MAIN_VIDEO_CODEC = 'H264';
 });
 
 function recStart(stream) {
