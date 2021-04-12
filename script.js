@@ -259,11 +259,11 @@ $('#h264').click(function () {
     MAIN_VIDEO_CODEC = 'H264';
 });
 $('#sfu').click(function () {
-    MAIN_VIDEO_CODEC = 'VP9';
+    roomType = 'sfu';
 });
 
 $('#mesh').click(function () {
-    MAIN_VIDEO_CODEC = 'H264';
+    roomType = 'mesh';
 });
 
 
