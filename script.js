@@ -5,12 +5,10 @@ let peer = null;
 let existingCall = null;
 let isReceive = false;    //受信専用かどうか
 var MAIN_VIDEO_CODEC = 'VP9';
+var roomType = 'sfu';
 let vidCodec = null;
 
-let mediaRecorder = null;
-let chunks = [];    // 録画でデータを保持する
 let rcvStream = null;
-let dataType = null;
 
 const STATS_INTERVAL = 1000;    //Statsを保存する間隔 ms
 let statsCount = 0;
@@ -166,7 +164,23 @@ function getpeerroom(roomid, idname) {
         key: '829682c4-f853-4d97-8691-aa0c10064efd',     //APIkey
         debug: 3
     });
-    roomstart(roomid);//イベント確認
+    //openイベント
+    peer.on('open', function () {
+        $('#my-id').text(peer.id);
+        room = peer.joinRoom(roomid, {
+            mode: roomType,
+            stream: localStream,
+        });
+    });
+
+    //着信処理
+    peer.on('call', function (call) {
+        call.answer(localStream, { videoCodec: vidCodec });
+        setupCallEventHandlers(call);
+    });
+    peer.on('stream', function (stream) {
+        addVideo(call, stream);
+    });
 }
 //送受信の設定
 function setCallOption(recieve, vCod) {
@@ -244,49 +258,14 @@ $('#vp9').click(function () {
 $('#h264').click(function () {
     MAIN_VIDEO_CODEC = 'H264';
 });
-
-function recStart(stream) {
-    //チェック
-    if (!stream) {
-        $('#console').text("stream not ready");
-        return;
-    }
-    if (mediaRecorder) {
-        $('#console').text("already recording");
-        return;
-    }
-
-    mediaRecorder = new MediaRecorder(stream); //録画用のインスタンス作成
-    chunks = [];                               //格納場所をクリア
-
-    // 一定間隔で録画が区切られて、データが渡される
-    mediaRecorder.ondataavailable = function (evt) {
-        chunks.push(evt.data);
-        dataType = evt.data.type;
-    }
-
-    //録画停止時のイベント
-    mediaRecorder.onstop = function (evt) {
-        //保存用URLの生成
-        let videoBrob = new Blob(chunks, { type: dataType });
-        let anchor = $('#downloadlink-video').get(0);
-        anchor.text = 'Download Record';
-        anchor.download = 'recorded.webm';
-        anchor.href = window.URL.createObjectURL(videoBrob);
-        mediaRecorder = null;
-    }
-
-    mediaRecorder.start(1000); //録画開始 1000ms 毎に録画データを区切る
-    $('#console').text("video recorder started");
-}
-
-//録画停止
-$('#recstop').click(function () {
-    if (mediaRecorder) {
-        mediaRecorder.stop();   //録画停止
-        $('#console').text("recorder stopped");
-    }
+$('#sfu').click(function () {
+    MAIN_VIDEO_CODEC = 'VP9';
 });
+
+$('#mesh').click(function () {
+    MAIN_VIDEO_CODEC = 'H264';
+});
+
 
 //Statsボタン
 $('#getting-stats').on('click', () => {
@@ -524,47 +503,7 @@ function start() {
         setupCallEventHandlers(call);
     });
 }
-//イベント id取得後じゃないと動作しない
-function roomstart(id) {
-    //openイベント
-    peer.on('open', function () {
-        $('#my-id').text(peer.id);
-        room = peer.joinRoom(id, {
-            mode: "sfu",
-            stream: localStream,
-        });
-    });
 
-    //errorイベント
-    peer.on('error', function (err) {
-        //alert(err.message);
-        $('#console').text(err.message);
-        setupMakeCallUI();
-    });
-
-    //closeイベント
-    peer.on('close', function () {
-        //alert(err.message);
-        $('#console').text(err.message);
-        setupMakeCallUI();
-    });
-
-    //disconnectedイベント
-    peer.on('disconnected', function () {
-        //alert(err.message);
-        $('#console').text(err.message);
-        setupMakeCallUI();
-    });
-
-    //着信処理
-    peer.on('call', function (call) {
-        call.answer(localStream, { videoCodec: vidCodec });
-        setupCallEventHandlers(call);
-    });
-    peer.on('stream', function (stream) {
-        addVideo(call, stream);
-    });
-}
 
 //Callオブジェクトに必要なイベント
 function setupCallEventHandlers(call) {
