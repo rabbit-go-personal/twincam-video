@@ -170,6 +170,7 @@ function getpeerroom(roomid, idname) {
         room = peer.joinRoom(roomid, {
             mode: roomType,
             stream: localStream,
+            videoBandWidth: 20000,
         });
     });
 
