@@ -50,7 +50,7 @@ function getmedia(wid, hei, fra) {    //引数は(幅,高さ,fps)
         .then(function (stream) {
             // Success
             videoTrack = stream.getVideoTracks()[0];           //MediaStreamから[0]番目のVideoのMediaStreamTrackを取得
-            capabilities = videoTrack.getCapabilities();       //設定可能な値の範囲
+        //    capabilities = videoTrack.getCapabilities();       //設定可能な値の範囲
             videoTrack.applyConstraints({ width: { ideal: wid }, height: { ideal: hei }, frameRate: { ideal: fra } })
                 .then(() => {                                  //値を設定
                     constraints = videoTrack.getConstraints(); //設定した値
